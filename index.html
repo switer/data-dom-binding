@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>data 2 dom</title>
+    <script src="zepto.min.js"></script>
+    <script src="Mux.min.js"></script>
+    <style>
+        .small {font-size: 18px}
+        .large {font-size: 30px;color: cornflowerblue}
+    </style>
+</head>
+<body>
+    <div z-html="number" z-class="clazz"></div>
+    <button z-click="click">click me to change numbers</button>
+    <script>
+        !function () {
+            /**
+             *  Initialize
+             */
+            var vm = new Mux({
+                props: {
+                    number: 10,
+                    clazz: 'small'
+                }
+            })
+            /**
+             *  Event methods
+             */
+            var methods = {
+                click: function () {
+                    vm.number = 1000
+                    vm.clazz = 'large'
+                }
+            }
+
+            /**
+             *  binding
+             */
+            $('[z-html]').each(function (index, el) {
+                var $el = $(el)
+                var depName = $el.attr('z-html')
+                function update(next) {
+                    $el.html(next)
+                }
+                vm.$watch(depName, update)
+                update(vm[depName])
+            })
+            $('[z-class]').each(function (index, el) {
+                var $el = $(el)
+                var depName = $el.attr('z-class')
+                function update(next) {
+                    $el.addClass(next)
+                }
+                vm.$watch(depName, update)
+                update(depName)
+            })
+            $('[z-click]').each(function (index, el) {
+                var $el = $(el)
+                var depName = $el.attr('z-click')
+                $el.on('click', methods[depName])
+            })
+        }()
+    </script>
+</body>
+</html>
